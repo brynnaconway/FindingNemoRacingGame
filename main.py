@@ -15,23 +15,29 @@ class Nemo(pygame.sprite.Sprite):
         rotation = -1 * float(math.degrees(math.atan2(float(ypos-y), float(xpos-x))))
         xcenter, ycenter = self.rect.center
         rotate = pygame.transform.rotate
-        self.nemo = rotate(self.orig_nemo, rotation)
-        self.rect = self.nemo.get_rect(center=(xcenter, ycenter))
+        #self.nemo = rotate(self.orig_nemo, rotation)
+        #self.rect = self.nemo.get_rect(center=(xcenter, ycenter))
 		#self.rect = self.rect.move(4, 0)
 		#self.rect = self.rect.move(0, ydir*4)
 
-    def move(self):
+    def move(self, event_key):
         xpos, ypos = pygame.mouse.get_pos() 
         x, y = self.rect.center
-        rotation = -1 * float(math.degrees(math.atan2(float(ypos-y), float(xpos-x))))
-        xcenter, ycenter = self.rect.center
-        rotate = pygame.transform.rotate
-        self.nemo = rotate(self.orig_nemo, rotation)
-        self.rect = self.nemo.get_rect(center=(xcenter, ycenter))
-        if xpos < 650 and ypos < 500 and xpos > -30 and ypos > -30:
-            x += 0.01 *float(math.cos(math.radians(rotation)))
-            y -= 0.01*float(math.sin(math.radians(rotation)))
-            self.rect = self.rect.move(x, y)
+        xdir = 0
+        ydir = 0
+        self.nemo = self.orig_nemo
+        if event_key == pygame.K_RIGHT: 
+            xdir = 1
+        elif event_key == pygame.K_LEFT: 
+            xdir = -1
+        elif event_key == pygame.K_UP:
+            ydir = -1
+            self.nemo = pygame.transform.rotate(self.orig_nemo, 20)
+        elif event_key == pygame.K_DOWN:
+            ydir = 1 
+            self.nemo = pygame.transform.rotate(self.orig_nemo, -20)
+        self.rect = self.rect.move(xdir*4, ydir*4)
+        #self.rect = self.rect.move(0, ydir*4)
 
 class GameSpace: 
     def main(self): 
@@ -50,11 +56,9 @@ class GameSpace:
             self.screen.fill(self.black)
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT:
-	                return         
-				#if event.type == pygame.MOUSEBUTTONDOWN: 
-				#	self.player.move()
-            if pygame.mouse.get_pressed()[0] == 1:
-                self.player.move()
+                    return         
+                if event.type == pygame.KEYDOWN: 
+                    self.player.move(event.key)
             self.player.tick()
             self.screen.blit(self.player.nemo, self.player.rect)
             pygame.display.flip()
