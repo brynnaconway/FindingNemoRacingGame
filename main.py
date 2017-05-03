@@ -32,10 +32,10 @@ class Nemo(pygame.sprite.Sprite):
             xdir = -1
         elif event_key == pygame.K_UP:
             ydir = -1
-            self.nemo = pygame.transform.rotate(self.orig_nemo, 20)
+            self.nemo = pygame.transform.rotate(self.orig_nemo, 10)
         elif event_key == pygame.K_DOWN:
             ydir = 1 
-            self.nemo = pygame.transform.rotate(self.orig_nemo, -20)
+            self.nemo = pygame.transform.rotate(self.orig_nemo, -10)
         self.rect = self.rect.move(xdir*4, ydir*4)
         #self.rect = self.rect.move(0, ydir*4)
 
