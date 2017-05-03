@@ -21,43 +21,43 @@ class Nemo(pygame.sprite.Sprite):
 		#self.rect = self.rect.move(0, ydir*4)
 
     def move(self):
-		xpos, ypos = pygame.mouse.get_pos() 
-		x, y = self.rect.center
-		rotation = -1 * float(math.degrees(math.atan2(float(ypos-y), float(xpos-x))))
-		xcenter, ycenter = self.rect.center
-		rotate = pygame.transform.rotate
-		self.nemo = rotate(self.orig_nemo, rotation)
-		self.rect = self.nemo.get_rect(center=(xcenter, ycenter))
-		self.rect = self.rect.move(1, 0)
-		#self.rect = self.rect.move(0, ydir*4)
-
+        xpos, ypos = pygame.mouse.get_pos() 
+        x, y = self.rect.center
+        rotation = -1 * float(math.degrees(math.atan2(float(ypos-y), float(xpos-x))))
+        xcenter, ycenter = self.rect.center
+        rotate = pygame.transform.rotate
+        self.nemo = rotate(self.orig_nemo, rotation)
+        self.rect = self.nemo.get_rect(center=(xcenter, ycenter))
+        if xpos < 650 and ypos < 500 and xpos > -30 and ypos > -30:
+            x += 0.01 *float(math.cos(math.radians(rotation)))
+            y -= 0.01*float(math.sin(math.radians(rotation)))
+            self.rect = self.rect.move(x, y)
 
 class GameSpace: 
     def main(self): 
-		pygame.init()
-		self.size = self.width, self.height = 640, 480
-		self.black = 0,0,0
-		self.screen = pygame.display.set_mode(self.size)
-		pygame.mouse.set_visible(True)
+        pygame.init()
+        self.size = self.width, self.height = 640, 480
+        self.black = 0,0,0
+        self.screen = pygame.display.set_mode(self.size)
+        pygame.mouse.set_visible(True)
 
-		self.player = Nemo(self)
-		pygame.key.set_repeat(500, 30)
-		self.clock = pygame.time.Clock()
+        self.player = Nemo(self)
+        pygame.key.set_repeat(500, 30)
+        self.clock = pygame.time.Clock()
 
-		while 1: 
-			self.clock.tick(60) # clock tick regulation
-			self.screen.fill(self.black)
-			for event in pygame.event.get(): 
-				if event.type == pygame.QUIT:
-					return         
+        while 1:  
+            self.clock.tick(60) # clock tick regulation
+            self.screen.fill(self.black)
+            for event in pygame.event.get(): 
+                if event.type == pygame.QUIT:
+	                return         
 				#if event.type == pygame.MOUSEBUTTONDOWN: 
 				#	self.player.move()
-			if pygame.mouse.get_pressed()[0] == 1:
-				self.player.move()
-			self.player.tick()
-			self.screen.blit(self.player.nemo, self.player.rect)
-			pygame.display.flip()
-
+            if pygame.mouse.get_pressed()[0] == 1:
+                self.player.move()
+            self.player.tick()
+            self.screen.blit(self.player.nemo, self.player.rect)
+            pygame.display.flip()
 
 def load_image(image_name):
     PATH = "Sprites/"
