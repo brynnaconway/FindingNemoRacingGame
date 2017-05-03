@@ -1,5 +1,10 @@
 import pygame, os, sys, math, time
 
+class Background(pygame.sprite.Sprite):
+    def __init__(self, gs): 
+        pygame.sprite.Sprite.__init__(self)
+        self.ocean, self.rect = load_image("ocean_scene.png")
+
 class Nemo(pygame.sprite.Sprite):
     def __init__(self, gs): 
         pygame.sprite.Sprite.__init__(self) # call Sprite initializer
@@ -42,24 +47,28 @@ class Nemo(pygame.sprite.Sprite):
 class GameSpace: 
     def main(self): 
         pygame.init()
-        self.size = self.width, self.height = 640, 480
+        self.size = self.width, self.height = 1400, 804
         self.black = 0,0,0
         self.screen = pygame.display.set_mode(self.size)
         pygame.mouse.set_visible(True)
 
         self.player = Nemo(self)
+        self.top_background = Background(self)
+        self.bottom_background = Background(self)
         pygame.key.set_repeat(500, 30)
         self.clock = pygame.time.Clock()
 
         while 1:  
             self.clock.tick(60) # clock tick regulation
-            self.screen.fill(self.black)
+            #self.screen.fill(self.black)
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT:
                     return         
                 if event.type == pygame.KEYDOWN: 
                     self.player.move(event.key)
             self.player.tick()
+            self.screen.blit(pygame.transform.scale(self.top_background.ocean, (1400, 400)), self.top_background.rect)
+            self.screen.blit(pygame.transform.scale(self.bottom_background.ocean, (1400, 400)), self.bottom_background.rect.move(0, 404))
             self.screen.blit(self.player.nemo, self.player.rect)
             pygame.display.flip()
 
