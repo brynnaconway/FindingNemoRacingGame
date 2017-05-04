@@ -18,7 +18,7 @@ class Enemy(pygame.sprite.Sprite):
             for i in range(0, 55): 
                 self.rect = self.rect.move(0, 6)
             self.time = 0
-            self.rect = 
+            #self.rect = 
 
 
 
