@@ -5,6 +5,23 @@ class Background(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.ocean, self.rect = load_image("ocean_scene.png")
 
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, image_name, timemax): 
+        pygame.sprite.Sprite.__init__(self)
+        self.image, self.rect = load_image(image_name)
+        self.time = 0 
+        self.time_max = timemax
+        self.orig_image = self.image
+
+    def tick(self):
+        if self.time == self.time_max:
+            for i in range(0, 55): 
+                self.rect = self.rect.move(0, 6)
+            self.time = 0
+            self.rect = 
+
+
+
 class Nemo(pygame.sprite.Sprite):
     def __init__(self, gs): 
         pygame.sprite.Sprite.__init__(self) # call Sprite initializer
