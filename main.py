@@ -58,13 +58,13 @@ class Nemo(pygame.sprite.Sprite):
         elif event_key == pygame.K_DOWN:
             ydir = 1 
             self.nemo = pygame.transform.rotate(self.orig_nemo, -10)
-        self.rect = self.rect.move(xdir*4, ydir*4)
+        self.rect = self.rect.move(xdir*5, ydir*5)
         #self.rect = self.rect.move(0, ydir*4)
 
 class GameSpace: 
     def main(self): 
         pygame.init()
-        self.size = self.width, self.height = 1400, 804
+        self.size = self.width, self.height = 1400, 664
         self.black = 0,0,0
         self.screen = pygame.display.set_mode(self.size)
         pygame.mouse.set_visible(True)
@@ -84,8 +84,8 @@ class GameSpace:
                 if event.type == pygame.KEYDOWN: 
                     self.player.move(event.key)
             self.player.tick()
-            self.screen.blit(pygame.transform.scale(self.top_background.ocean, (1400, 400)), self.top_background.rect)
-            self.screen.blit(pygame.transform.scale(self.bottom_background.ocean, (1400, 400)), self.bottom_background.rect.move(0, 404))
+            self.screen.blit(pygame.transform.scale(self.top_background.ocean, (1400, 330)), self.top_background.rect)
+            self.screen.blit(pygame.transform.scale(self.bottom_background.ocean, (1400, 330)), self.bottom_background.rect.move(0, 334))
             self.screen.blit(self.player.nemo, self.player.rect)
             pygame.display.flip()
 
