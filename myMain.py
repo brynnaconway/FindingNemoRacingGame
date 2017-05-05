@@ -9,7 +9,8 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, image_name, timemax, time_start): 
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image(image_name)
-        self.rect = self.rect.move(600, 10)
+        self.rect = self.rect.move(600, -100)
+        self.orig_rect = self.rect
         self.time = time_start
         self.time_max = timemax
         self.orig_image = self.image
@@ -17,15 +18,16 @@ class Enemy(pygame.sprite.Sprite):
 
     def tick(self):
         if self.time == self.time_max:
-            if self.count < 32: 
-                self.rect = self.rect.move(0, 5)
+            if self.count < 41: 
+                self.rect = self.rect.move(0, 8)
                 self.count += 1
-            elif self.count == 64:
+            elif self.rect.y <= self.orig_rect.y:
                 self.time = 0
                 self.count = 0
             else: 
-                self.rect = self.rect.move(0, -5)
-        self.time += 1
+                self.rect = self.rect.move(0, -8)
+        else:
+            self.time += 1
 
 class Nemo(pygame.sprite.Sprite):
     def __init__(self, gs): 
@@ -79,7 +81,7 @@ class GameSpace:
         self.screen = pygame.display.set_mode(self.size)
         pygame.mouse.set_visible(True)
 
-        self.shark = Enemy("shark.png", 600, 500)
+        self.shark = Enemy("shark.png", 60, 50)
         self.player = Nemo(self)
         self.top_background = Background(self)
         self.bottom_background = Background(self)
@@ -95,10 +97,11 @@ class GameSpace:
                 if event.type == pygame.KEYDOWN: 
                     self.player.move(event.key)
             self.player.tick()
+            self.shark.tick()
             self.screen.blit(pygame.transform.scale(self.top_background.ocean, (1400, 330)), self.top_background.rect)
             self.screen.blit(pygame.transform.scale(self.bottom_background.ocean, (1400, 330)), self.bottom_background.rect.move(0, 334))
             self.screen.blit(self.player.nemo, self.player.rect)
-            self.screen.blit(pygame.transform.scale(self.shark.image, (70, 70)), self.shark.rect)
+            self.screen.blit(pygame.transform.scale(self.shark.image, (100, 100)), self.shark.rect)
             pygame.display.flip()
 
 def load_image(image_name):
