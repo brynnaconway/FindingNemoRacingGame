@@ -6,10 +6,10 @@ class Background(pygame.sprite.Sprite):
         self.ocean, self.rect = load_image("ocean_scene.png")
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, image_name, timemax, time_start): 
+    def __init__(self, image_name, timemax, time_start, x, y): 
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image(image_name)
-        self.rect = self.rect.move(600, -124)
+        self.rect = self.rect.move(x, y)
         self.orig_rect = self.rect
         self.time = time_start
         self.time_max = timemax
@@ -86,15 +86,6 @@ class Crush(pygame.sprite.Sprite):
         self.gofast = 0 
 
     def tick(self): 
-        #xpos, ypos = pygame.mouse.get_pos() 
-        #x, y = self.rect.center
-        #rotation = -1 * float(math.degrees(math.atan2(float(ypos-y), float(xpos-x))))
-        #xcenter, ycenter = self.rect.center
-        #rotate = pygame.transform.rotate
-        #self.nemo = rotate(self.orig_nemo, rotation)
-        #self.rect = self.nemo.get_rect(center=(xcenter, ycenter))
-		#self.rect = self.rect.move(4, 0)
-		#self.rect = self.rect.move(0, ydir*4)
         if self.rect.colliderect(self.gs.player.rect):
             self.gofast = 1;
 
@@ -121,6 +112,14 @@ class Crush(pygame.sprite.Sprite):
         else:
             self.rect = self.rect.move(xdir*10, ydir*10)
 
+class Home(pygame.sprite.Sprite):
+    def __init__(self, gs): 
+        pygame.sprite.Sprite.__init__(self) # call Sprite initializer
+        self.home, self.rect = load_image("home.png")
+        self.orig_home = self.home
+        self.rect = self.rect.move(1250, 175)
+        self.gs = gs
+
 
 class GameSpace: 
     def main(self): 
@@ -130,11 +129,13 @@ class GameSpace:
         self.screen = pygame.display.set_mode(self.size)
         pygame.mouse.set_visible(True)
 
-        self.shark = Enemy("shark.png", 60, 50)
+        self.shark = Enemy("shark.png", 60, 50, 600, -124)
+        self.jelly = Enemy("jellyfish_sprite.png", 60, 40, 150, -150)
         self.player = Nemo(self)
         self.top_background = Background(self)
         self.bottom_background = Background(self)
         self.crush = Crush(self)
+        self.home = Home(self)
         pygame.key.set_repeat(500, 30)
         self.clock = pygame.time.Clock()
 
@@ -155,11 +156,14 @@ class GameSpace:
                 self.player.tick()
             self.crush.tick()
             self.shark.tick()
+            self.jelly.tick()
             self.screen.blit(pygame.transform.scale(self.top_background.ocean, (1400, 330)), self.top_background.rect)
             self.screen.blit(pygame.transform.scale(self.bottom_background.ocean, (1400, 330)), self.bottom_background.rect.move(0, 334))
             self.screen.blit(self.crush.crush, self.crush.rect)
             self.screen.blit(self.player.nemo, self.player.rect)
+            self.screen.blit(self.home.home, self.home.rect)
             self.screen.blit(pygame.transform.scale(self.shark.image, (130, 130)), self.shark.rect)
+            self.screen.blit(pygame.transform.scale(self.jelly.image, (130, 130)), self.jelly.rect)
             #self.screen.blit(pygame.transform.scale(self.crush.crush, (215, 117)), self.crush.rect)
             
             pygame.display.flip()
