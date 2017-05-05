@@ -9,6 +9,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self, image_name, timemax, time_start): 
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image(image_name)
+        self.rect = self.rect.move(600, 10)
         self.time = time_start
         self.time_max = timemax
         self.orig_image = self.image
@@ -97,6 +98,7 @@ class GameSpace:
             self.screen.blit(pygame.transform.scale(self.top_background.ocean, (1400, 330)), self.top_background.rect)
             self.screen.blit(pygame.transform.scale(self.bottom_background.ocean, (1400, 330)), self.bottom_background.rect.move(0, 334))
             self.screen.blit(self.player.nemo, self.player.rect)
+            self.screen.blit(pygame.transform.scale(self.shark.image, (70, 70)), self.shark.rect)
             pygame.display.flip()
 
 def load_image(image_name):
