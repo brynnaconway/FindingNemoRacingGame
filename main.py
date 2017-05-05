@@ -50,15 +50,20 @@ class Nemo(pygame.sprite.Sprite):
         self.nemo = self.orig_nemo
         if event_key == pygame.K_RIGHT: 
             xdir = 1
-        elif event_key == pygame.K_LEFT: 
-            xdir = -1
+        #elif event_key == pygame.K_LEFT: 
+         #   xdir = -1
         elif event_key == pygame.K_UP:
-            ydir = -1
-            self.nemo = pygame.transform.rotate(self.orig_nemo, 10)
+            if self.rect.y + self.nemo.get_height() > 110:
+                ydir = -1
+                #self.nemo = pygame.transform.rotate(self.orig_nemo, 10)
         elif event_key == pygame.K_DOWN:
-            ydir = 1 
-            self.nemo = pygame.transform.rotate(self.orig_nemo, -10)
-        self.rect = self.rect.move(xdir*5, ydir*5)
+            if self.rect.y + self.nemo.get_height() < 334:
+                ydir = 1 
+                #self.nemo = pygame.transform.rotate(self.orig_nemo, -10)
+        if self.rect.y + self.nemo.get_height() > 300:
+            self.rect = self.rect.move(xdir*3, ydir*3)
+        else:
+            self.rect = self.rect.move(xdir*10, ydir*10)
         #self.rect = self.rect.move(0, ydir*4)
 
 class GameSpace: 
