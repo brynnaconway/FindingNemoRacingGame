@@ -14,7 +14,7 @@ class Background(pygame.sprite.Sprite):
             return
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, image_name, timemax, time_start, x, y, count_time): 
+    def __init__(self, image_name, timemax, time_start, x, y, count_time, move_dir): 
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image(image_name)
         self.rect = self.rect.move(x, y)
@@ -24,17 +24,20 @@ class Enemy(pygame.sprite.Sprite):
         self.orig_image = self.image
         self.count = 0
         self.count_time = count_time
+        self.move_dir = move_dir
+
 
     def tick(self):
         if self.time == self.time_max:
+            print("move dir: ", self.move_dir)
             if self.count < self.count_time:
-                self.rect = self.rect.move(0, 4)
+                self.rect = self.rect.move(0, 4*self.move_dir)
                 self.count += 1
-            elif self.rect.y <= self.orig_rect.y:
+            elif self.rect.y == self.orig_rect.y:
                 self.time = 0
                 self.count = 0
             else: 
-                self.rect = self.rect.move(0, -4)
+                self.rect = self.rect.move(0, -4*self.move_dir)
         else:
             self.time += 1
 
@@ -101,6 +104,24 @@ class Nemo(pygame.sprite.Sprite):
         else:
             self.rect = self.rect.move(xdir*10, ydir*10)
 
+    '''def rotate(self):
+        xpos, ypos = pygame.mouse.get_pos() 
+        x, y = self.rect.center
+        #rotation = -1 * float(math.degrees(math.atan2(float(ypos-y), float(xpos-x))))
+        i=4
+        b=1
+        while i > 0:
+            rotation = b*30
+            xcenter, ycenter = self.rect.center
+            rotate = pygame.transform.rotate
+            self.image = rotate(self.orig_nemo, rotation)
+            self.rect = self.image.get_rect(center=(xcenter, ycenter))
+            i-=1
+            self.gs.screen.blit(self.image, self.rect)
+            b = b *(-1)'''
+        
+        
+
 class Crush(pygame.sprite.Sprite):
     def __init__(self, gs, x, y): 
         pygame.sprite.Sprite.__init__(self) # call Sprite initializer
@@ -161,7 +182,7 @@ class Home(pygame.sprite.Sprite):
         self.gs = gs
 
     def tick(self):
-        print("hey")
+        return
 
     def update(self, key):
         if key == "move":
@@ -169,75 +190,95 @@ class Home(pygame.sprite.Sprite):
         elif key == "tick":
             self.tick()
 
-
-class GameSpace: 
-    def main(self): 
-        pygame.init()
-        self.size = self.width, self.height = 1400, 664
-        self.black = 0,0,0
-        self.screen = pygame.display.set_mode(self.size)
-        pygame.mouse.set_visible(True)
-
-        self.shark = Enemy("shark.png", 60, 35, 675, -124, 78)
-        self.jelly = Enemy("jellyfish_sprite.png", 60, 57, 150, -150, 90)
-        self.player = Nemo(self, 55, 35)
-        self.top_background = Background(self, "ocean_scene.png", 0, 0)
-        self.top_background2 = Background(self, "ocean_scene_copy.png", 1500, 0)
-        self.top_background3 = Background(self, "ocean_scene_copy.png", 2800, 0)
-        self.bottom_background = Background(self, "ocean_scene.png", 0, 0)
-        self.crush = Crush(self, 400, 5)
-        self.home = Home(self, 4100, 75)
+class SetUp:
+    def __init__(self, nc_offset, shark_offset, jelly_offset, move_dir):
+        self.shark = Enemy("shark.png", 60, 35, 675, -124+shark_offset, 82, move_dir)
+        self.jelly = Enemy("jellyfish_sprite.png", 60, 57, 150, -150+jelly_offset, 94, move_dir)
+        self.player = Nemo(self, 55, 35+nc_offset)
+        self.background = Background(self, "ocean_scene.png", 0, 0+nc_offset)
+        self.background2 = Background(self, "ocean_scene_copy.png", 1500, 0+nc_offset)
+        self.background3 = Background(self, "ocean_scene_copy.png", 2800, 0+nc_offset)
+        self.crush = Crush(self, 400, 5+nc_offset)
+        self.home = Home(self, 4100, 75+nc_offset)
         pygame.key.set_repeat(500, 30)
-        self.clock = pygame.time.Clock()
         self.sleep_count = 0
         self.jelly_collision = 0
-        self.shark2 = Enemy("shark.png", 60, 35, 1800, -124, 78)
-        self.jelly2 = Enemy("jellyfish_sprite.png", 60, 57, 1350, -150, 90)
-        self.shark3 = Enemy("shark.png", 60, 35, 2500, -124, 78)
-        self.jelly3 = Enemy("jellyfish_sprite.png", 60, 57, 2000, -150, 90)
+        self.shark2 = Enemy("shark.png", 60, 35, 1800, -124+shark_offset, 82, move_dir)
+        self.jelly2 = Enemy("jellyfish_sprite.png", 60, 57, 1350, -150+jelly_offset, 94, move_dir)
+        self.shark3 = Enemy("shark.png", 60, 35, 2500, -124+shark_offset, 82, move_dir)
+        self.jelly3 = Enemy("jellyfish_sprite.png", 60, 57, 2000, -150+jelly_offset, 94, move_dir)
 
-        self.obstacles = pygame.sprite.Group(self.top_background, self.top_background2, self.top_background3, self.shark, self.jelly, self.crush, self.home, self.shark2, self.shark3, self.jelly2, self.jelly3)
+        self.obstacles = pygame.sprite.Group(self.background, self.background2, self.background3, self.shark, self.jelly, self.crush, self.home, self.shark2, self.shark3, self.jelly2, self.jelly3)
+        
+class GameSpace: 
+    def main(self, screen, top, bottom): 
+        self.screen = screen
+        self.clock = pygame.time.Clock()
+        self.top = top
+        self.bottom = bottom
 
         while 1:  
             self.clock.tick(60) # clock tick regulation
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT:
                     return         
-                if event.type == pygame.KEYDOWN and self.sleep_count == 0:
-                    if (self.player.rect.x + self.player.image.get_width() < 900) or (self.home.rect.x + self.home.image.get_width() < 1400):
-                        self.player.move(event.key)
+                if event.type == pygame.KEYDOWN and self.top.sleep_count == 0:
+                    if (self.top.player.rect.x + self.top.player.image.get_width() < 900) or (self.top.home.rect.x + self.top.home.image.get_width() < 1400):
+                        self.top.player.move(event.key)
                     else:
-                        self.obstacles.update("move")
-                        self.player.move_updown(event.key)
-            self.player.tick()
-            if (self.player.rect.x + self.player.image.get_width() > 75) and self.sleep_count == 0:
-                if self.player.rect.x + self.player.image.get_width() < 900:
-                    self.player.rect = self.player.rect.move(-1, 0)
-            if self.player.rect.colliderect(self.shark.rect):
-                self.player = Nemo(self, 55, 35)
-                self.player.tick()
-            if self.player.rect.colliderect(self.jelly.rect):
-                self.jelly_collision = 1
-            if self.jelly_collision == 1:
-                self.sleep_count+= 1
-            if self.sleep_count >= 60:
-                self.jelly_collision = 0
-                self.sleep_count = 0
-            #self.crush.tick()
-            #self.shark.tick()
-            #self.jelly.tick()
-            self.obstacles.update("tick")
-            #self.screen.blit(pygame.transform.scale(self.top_background.ocean, (1400, 330)), self.top_background.rect)
-            self.screen.blit(pygame.transform.scale(self.bottom_background.image, (1400, 330)), self.bottom_background.rect.move(0, 334))
-            if self.crush.rect.x + self.crush.image.get_width() >= 1550:
-                self.obstacles.remove(self.crush)
-            self.obstacles.draw(self.screen)
-            self.screen.blit(self.player.image, self.player.rect)
-            #self.screen.blit(self.home.home, self.home.rect)
-            #self.screen.blit(self.shark.image, self.shark.rect)
-            #self.screen.blit(self.jelly.image, self.jelly.rect)
-            #self.screen.blit(pygame.transform.scale(self.crush.crush, (215, 117)), self.crush.rect)
-            
+                        self.top.obstacles.update("move")
+                        self.top.player.move_updown(event.key)
+            self.top.player.tick()
+            if (self.top.player.rect.x + self.top.player.image.get_width() > 75) and self.top.sleep_count == 0:
+                if self.top.player.rect.x + self.top.player.image.get_width() < 900:
+                    self.top.player.rect = self.top.player.rect.move(-1, 0)
+            if self.top.player.rect.colliderect(self.top.shark.rect):
+                self.top.player = Nemo(self, 55, 35)
+                self.top.player.tick()
+            if self.top.player.rect.colliderect(self.top.jelly.rect):
+                self.top.jelly_collision = 1
+            if self.top.jelly_collision == 1:
+                #self.player.rotate()
+                self.top.sleep_count+= 1
+            if self.top.sleep_count >= 60:
+                self.top.jelly_collision = 0
+                self.top.sleep_count = 0
+            self.top.obstacles.update("tick")
+            if self.top.crush.rect.x + self.top.crush.image.get_width() >= 1550:
+                self.top.obstacles.remove(self.top.crush)
+            self.top.obstacles.draw(self.screen)
+            self.screen.blit(self.top.player.image, self.top.player.rect)
+            pygame.display.flip()
+
+            '''for event in pygame.event.get(): 
+                if event.type == pygame.QUIT:
+                    return         
+                if event.type == pygame.KEYDOWN and self.bottom.sleep_count == 0:
+                    if (self.bottom.player.rect.x + self.bottom.player.image.get_width() < 900) or (self.bottom.home.rect.x + self.bottom.home.image.get_width() < 1400):
+                        self.bottom.player.move(event.key)
+                    else:
+                        self.bottom.obstacles.update("move")
+                        self.bottom.player.move_updown(event.key)'''
+            self.bottom.player.tick()
+            if (self.bottom.player.rect.x + self.bottom.player.image.get_width() > 75) and self.bottom.sleep_count == 0:
+                if self.bottom.player.rect.x + self.bottom.player.image.get_width() < 900:
+                    self.bottom.player.rect = self.bottom.player.rect.move(-1, 0)
+            if self.bottom.player.rect.colliderect(self.bottom.shark.rect):
+                self.bottom.player = Nemo(self, 55, 35)
+                self.bottom.player.tick()
+            if self.bottom.player.rect.colliderect(self.bottom.jelly.rect):
+                self.bottom.jelly_collision = 1
+            if self.bottom.jelly_collision == 1:
+                #self.player.rotate()
+                self.bottom.sleep_count+= 1
+            if self.bottom.sleep_count >= 60:
+                self.bottom.jelly_collision = 0
+                self.bottom.sleep_count = 0
+            self.bottom.obstacles.update("tick")
+            if self.bottom.crush.rect.x + self.bottom.crush.image.get_width() >= 1550:
+                self.bottom.obstacles.remove(self.bottom.crush)
+            self.bottom.obstacles.draw(self.screen)
+            self.screen.blit(self.bottom.player.image, self.bottom.player.rect)
             pygame.display.flip()
 
 def load_image(image_name):
@@ -266,5 +307,15 @@ def load_sound(name):
 
 
 if __name__ == "__main__": 
+    pygame.init()
+    size = width, height = 1400, 664
+    black = 0,0,0
+    screen = pygame.display.set_mode(size)
+    pygame.mouse.set_visible(True)
+    shark_offset = 788
+    jelly_offset = 884
+    top = SetUp(0, 0, 0, 1)
+    bottom = SetUp(334, shark_offset, jelly_offset, -1)
     gs = GameSpace() 
-    gs.main()
+    gs.main(screen, top, bottom)
+
