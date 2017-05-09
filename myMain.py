@@ -211,77 +211,79 @@ class SetUp:
         self.obstacles = pygame.sprite.Group(self.background, self.background2, self.background3, self.shark, self.jelly, self.crush, self.home, self.shark2, self.shark3, self.jelly2, self.jelly3)
         
 class GameSpace: 
-    def main(self, screen, top, bottom): 
-        self.screen = screen
-        self.clock = pygame.time.Clock()
-        self.top = top
-        self.bottom = bottom
+    def main(self):
+        pygame.init()
+        size = width, height = 1400, 664
+        black = 0,0,0
+        self.screen = pygame.display.set_mode(size)
+        pygame.mouse.set_visible(True)
+        shark_offset = 788
+        jelly_offset = 884
+        self.top = SetUp(0, 0, 0, 1)
+        self.bottom = SetUp(334, shark_offset, jelly_offset, -1)
 
-        while 1:  
-            self.clock.tick(60) # clock tick regulation
-            for event in pygame.event.get(): 
-                if event.type == pygame.QUIT:
-                    return         
-                if event.type == pygame.KEYDOWN and self.top.sleep_count == 0:
-                    if (self.top.player.rect.x + self.top.player.image.get_width() < 900) or (self.top.home.rect.x + self.top.home.image.get_width() < 1400):
-                        self.top.player.move(event.key)
-                    else:
-                        self.top.obstacles.update("move")
-                        self.top.player.move_updown(event.key)
+    def loop():
+        for event in pygame.event.get(): 
+            if event.type == pygame.QUIT:
+                return         
+            if event.type == pygame.KEYDOWN and self.top.sleep_count == 0:
+                if (self.top.player.rect.x + self.top.player.image.get_width() < 900) or (self.top.home.rect.x + self.top.home.image.get_width() < 1400):
+                    self.top.player.move(event.key)
+                else:
+                    self.top.obstacles.update("move")
+                    self.top.player.move_updown(event.key)
+        self.top.player.tick()
+        if (self.top.player.rect.x + self.top.player.image.get_width() > 75) and self.top.sleep_count == 0:
+            if self.top.player.rect.x + self.top.player.image.get_width() < 900:
+                self.top.player.rect = self.top.player.rect.move(-1, 0)
+        if self.top.player.rect.colliderect(self.top.shark.rect):
+            self.top.player = Nemo(self, 55, 35)
             self.top.player.tick()
-            if (self.top.player.rect.x + self.top.player.image.get_width() > 75) and self.top.sleep_count == 0:
-                if self.top.player.rect.x + self.top.player.image.get_width() < 900:
-                    self.top.player.rect = self.top.player.rect.move(-1, 0)
-            if self.top.player.rect.colliderect(self.top.shark.rect):
-                self.top.player = Nemo(self, 55, 35)
-                self.top.player.tick()
-            if self.top.player.rect.colliderect(self.top.jelly.rect):
-                self.top.jelly_collision = 1
-            if self.top.jelly_collision == 1:
-                #self.player.rotate()
-                self.top.sleep_count+= 1
-            if self.top.sleep_count >= 60:
-                self.top.jelly_collision = 0
-                self.top.sleep_count = 0
-            self.top.obstacles.update("tick")
-            if self.top.crush.rect.x + self.top.crush.image.get_width() >= 1550:
-                self.top.obstacles.remove(self.top.crush)
-            self.top.obstacles.draw(self.screen)
-            self.screen.blit(self.top.player.image, self.top.player.rect)
-            pygame.display.flip()
+        if self.top.player.rect.colliderect(self.top.jelly.rect):
+            self.top.jelly_collision = 1
+        if self.top.jelly_collision == 1:
+            #self.player.rotate()
+            self.top.sleep_count+= 1
+        if self.top.sleep_count >= 60:
+            self.top.jelly_collision = 0
+            self.top.sleep_count = 0
+        self.top.obstacles.update("tick")
+        if self.top.crush.rect.x + self.top.crush.image.get_width() >= 1550:
+            self.top.obstacles.remove(self.top.crush)
+        self.top.obstacles.draw(self.screen)
+        self.screen.blit(self.top.player.image, self.top.player.rect)
+        pygame.display.flip()
 
-            '''for event in pygame.event.get(): 
-                if event.type == pygame.QUIT:
-                    return         
-                if event.type == pygame.KEYDOWN and self.bottom.sleep_count == 0:
-                    if (self.bottom.player.rect.x + self.bottom.player.image.get_width() < 900) or (self.bottom.home.rect.x + self.bottom.home.image.get_width() < 1400):
-                        self.bottom.player.move(event.key)
-                    else:
-                        self.bottom.obstacles.update("move")
-                        self.bottom.player.move_updown(event.key)'''
+        '''for event in pygame.event.get(): 
+            if event.type == pygame.QUIT:
+                return         
+            if event.type == pygame.KEYDOWN and self.bottom.sleep_count == 0:
+                if (self.bottom.player.rect.x + self.bottom.player.image.get_width() < 900) or (self.bottom.home.rect.x + self.bottom.home.image.get_width() < 1400):
+                    self.bottom.player.move(event.key)
+                else:
+                    self.bottom.obstacles.update("move")
+                    self.bottom.player.move_updown(event.key)'''
+        self.bottom.player.tick()
+        if (self.bottom.player.rect.x + self.bottom.player.image.get_width() > 75) and self.bottom.sleep_count == 0:
+            if self.bottom.player.rect.x + self.bottom.player.image.get_width() < 900:
+                self.bottom.player.rect = self.bottom.player.rect.move(-1, 0)
+        if self.bottom.player.rect.colliderect(self.bottom.shark.rect):
+            self.bottom.player = Nemo(self, 55, 35)
             self.bottom.player.tick()
-            if (self.bottom.player.rect.x + self.bottom.player.image.get_width() > 75) and self.bottom.sleep_count == 0:
-                if self.bottom.player.rect.x + self.bottom.player.image.get_width() < 900:
-                    self.bottom.player.rect = self.bottom.player.rect.move(-1, 0)
-            if self.bottom.player.rect.colliderect(self.bottom.shark.rect):
-                self.bottom.player = Nemo(self, 55, 35)
-                self.bottom.player.tick()
-            if self.bottom.player.rect.colliderect(self.bottom.jelly.rect):
-                self.bottom.jelly_collision = 1
-            if self.bottom.jelly_collision == 1:
-                #self.player.rotate()
-                self.bottom.sleep_count+= 1
-            if self.bottom.sleep_count >= 60:
-                self.bottom.jelly_collision = 0
-                self.bottom.sleep_count = 0
-            self.bottom.obstacles.update("tick")
-            if self.bottom.crush.rect.x + self.bottom.crush.image.get_width() >= 1550:
-                self.bottom.obstacles.remove(self.bottom.crush)
-            self.bottom.obstacles.draw(self.screen)
-            self.screen.blit(self.bottom.player.image, self.bottom.player.rect)
-            pygame.display.flip()
-            #line receiver for data received in twisted
-            #looping call
+        if self.bottom.player.rect.colliderect(self.bottom.jelly.rect):
+            self.bottom.jelly_collision = 1
+        if self.bottom.jelly_collision == 1:
+            #self.player.rotate()
+            self.bottom.sleep_count+= 1
+        if self.bottom.sleep_count >= 60:
+            self.bottom.jelly_collision = 0
+            self.bottom.sleep_count = 0
+        self.bottom.obstacles.update("tick")
+        if self.bottom.crush.rect.x + self.bottom.crush.image.get_width() >= 1550:
+            self.bottom.obstacles.remove(self.bottom.crush)
+        self.bottom.obstacles.draw(self.screen)
+        self.screen.blit(self.bottom.player.image, self.bottom.player.rect)
+        pygame.display.flip()
 
 def load_image(image_name):
     PATH = "Sprites/"
@@ -309,15 +311,6 @@ def load_sound(name):
 
 
 if __name__ == "__main__": 
-    pygame.init()
-    size = width, height = 1400, 664
-    black = 0,0,0
-    screen = pygame.display.set_mode(size)
-    pygame.mouse.set_visible(True)
-    shark_offset = 788
-    jelly_offset = 884
-    top = SetUp(0, 0, 0, 1)
-    bottom = SetUp(334, shark_offset, jelly_offset, -1)
     gs = GameSpace() 
     gs.main(screen, top, bottom)
 
