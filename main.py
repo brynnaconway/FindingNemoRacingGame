@@ -6,7 +6,7 @@ class Background(pygame.sprite.Sprite):
         self.ocean, self.rect = load_image("ocean_scene.png")
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, image_name, timemax, time_start, x, y): 
+    def __init__(self, gs, image_name, timemax, time_start, x, y): 
         pygame.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image(image_name)
         self.rect = self.rect.move(x, y)
@@ -15,19 +15,34 @@ class Enemy(pygame.sprite.Sprite):
         self.time_max = timemax
         self.orig_image = self.image
         self.count = 0
+        self.gs = gs
+        self.shark_hit = 0
+        self.left_border = 0
 
     def tick(self):
+        #self.rect = self.orig_rect
         if self.time == self.time_max:
-            if self.count < 39: 
-                self.rect = self.rect.move(0, 8)
+            if self.count < 78: 
+                self.rect = self.rect.move(0, 4)
                 self.count += 1
             elif self.rect.y <= self.orig_rect.y:
                 self.time = 0
                 self.count = 0
             else: 
-                self.rect = self.rect.move(0, -8)
+                self.rect = self.rect.move(0, -4)
         else:
             self.time += 1
+        if self.rect.colliderect(self.gs.player.rect):
+            self.shark_hit = 1
+            print("COLLISION")
+        if self.rect.x + self.image.get_width() < 50:
+            self.left_border = 1
+            print("LEFT")
+
+    #//print("collision")
+        else:
+            self.shark_hit = 0
+            print("NO COLLISION")
 
 class Nemo(pygame.sprite.Sprite):
     def __init__(self, gs): 
@@ -36,6 +51,7 @@ class Nemo(pygame.sprite.Sprite):
         self.orig_nemo = self.nemo
         self.rect = self.rect.move(55, 35)
         self.gs = gs
+        self.game_over = 0
 
     def tick(self): 
         '''move the deathstar with the mouse'''
@@ -55,6 +71,8 @@ class Nemo(pygame.sprite.Sprite):
         xdir = 0
         ydir = 0
         self.nemo = self.orig_nemo
+        if self.rect.x +self.nemo.get_width() >= 1370:
+            self.game_over = 1
         if event_key == pygame.K_RIGHT: 
             if self.rect.x +self.nemo.get_width() < 1370:
                 xdir = 1
@@ -84,6 +102,7 @@ class Crush(pygame.sprite.Sprite):
         self.rect = self.rect.move(900, 5)
         self.gs = gs
         self.gofast = 0 
+        self.left_border = 0
 
     def tick(self): 
         if self.rect.colliderect(self.gs.player.rect):
@@ -111,6 +130,9 @@ class Crush(pygame.sprite.Sprite):
             self.rect = self.rect.move(xdir*3, ydir*3)
         else:
             self.rect = self.rect.move(xdir*10, ydir*10)
+        if self.rect.x + self.crush.get_width() < 50:
+            self.left_border = 1
+            print("LEFT")
 
 class Home(pygame.sprite.Sprite):
     def __init__(self, gs): 
@@ -129,8 +151,8 @@ class GameSpace:
         self.screen = pygame.display.set_mode(self.size)
         pygame.mouse.set_visible(True)
 
-        self.shark = Enemy("shark.png", 60, 50, 600, -124)
-        self.jelly = Enemy("jellyfish_sprite.png", 60, 40, 150, -150)
+        self.shark = Enemy(self, "shark.png", 60, 10, 500, -124)
+        #self.jelly = Enemy(self, "jellyfish_sprite.png", 60, 40, 200, -150)
         self.player = Nemo(self)
         self.top_background = Background(self)
         self.bottom_background = Background(self)
@@ -138,32 +160,49 @@ class GameSpace:
         self.home = Home(self)
         pygame.key.set_repeat(500, 30)
         self.clock = pygame.time.Clock()
+        self.moving_time = 0
 
         while 1:  
             self.clock.tick(60) # clock tick regulation
-            for event in pygame.event.get(): 
-                if event.type == pygame.QUIT:
-                    return         
-                if event.type == pygame.KEYDOWN:
-                    if self.crush.gofast == 1:
-                        self.player.move(event.key)
-                        self.crush.move(event.key)
-                    else: 
-                        self.player.move(event.key)
+            if self.moving_time < 500 and self.player.game_over == 0:
+                if self.shark.left_border == 1:
+                    self.shark.rect = self.shark.rect.move(500, -124)
+                    print("SHARK")
+                for event in pygame.event.get(): 
+                    if event.type == pygame.QUIT:
+                        return         
+                    if event.type == pygame.KEYDOWN:
+                        if self.crush.gofast == 1:
+                            self.player.move(event.key)
+                            self.crush.move(event.key)
+                        else: 
+                            self.player.move(event.key)
+                self.player.rect = self.player.rect.move(-1, 0)
+                self.crush.rect = self.crush.rect.move(-1,0)
+                self.shark.rect = self.shark.rect.move(-1,0)
+                self.moving_time = self.moving_time + 1
+            elif self.moving_time >= 500 and self.player.game_over == 0:
+                for event in pygame.event.get(): 
+                    if event.type == pygame.QUIT:
+                        return         
+                    if event.type == pygame.KEYDOWN:
+                        if self.crush.gofast == 1:
+                            self.player.move(event.key)
+                            self.crush.move(event.key)
+                        else: 
+                            self.player.move(event.key)
             self.player.tick()
-            if self.player.rect.colliderect(self.shark.rect):
-                self.player = Nemo(self)
-                self.player.tick()
             self.crush.tick()
             self.shark.tick()
-            self.jelly.tick()
+            #self.jelly.tick()
             self.screen.blit(pygame.transform.scale(self.top_background.ocean, (1400, 330)), self.top_background.rect)
             self.screen.blit(pygame.transform.scale(self.bottom_background.ocean, (1400, 330)), self.bottom_background.rect.move(0, 334))
             self.screen.blit(self.crush.crush, self.crush.rect)
             self.screen.blit(self.player.nemo, self.player.rect)
             self.screen.blit(self.home.home, self.home.rect)
+           # if self.shark.shark_hit == 0:
             self.screen.blit(pygame.transform.scale(self.shark.image, (130, 130)), self.shark.rect)
-            self.screen.blit(pygame.transform.scale(self.jelly.image, (130, 130)), self.jelly.rect)
+            #self.screen.blit(pygame.transform.scale(self.jelly.image, (130, 130)), self.jelly.rect)
             #self.screen.blit(pygame.transform.scale(self.crush.crush, (215, 117)), self.crush.rect)
             
             pygame.display.flip()

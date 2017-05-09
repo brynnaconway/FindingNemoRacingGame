@@ -280,6 +280,8 @@ class GameSpace:
             self.bottom.obstacles.draw(self.screen)
             self.screen.blit(self.bottom.player.image, self.bottom.player.rect)
             pygame.display.flip()
+            #line receiver for data received in twisted
+            #looping call
 
 def load_image(image_name):
     PATH = "Sprites/"
