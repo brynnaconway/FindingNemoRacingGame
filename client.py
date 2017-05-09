@@ -36,7 +36,7 @@ class GameClientConn(Protocol):
 
 class GameClientConnFactory(ClientFactory):
     def __init__(self):
-        self.myConn = InitClientConn()
+        self.myConn = GameClientConn()
 
     def buildProtocol(self, addr):
         return self.myConn

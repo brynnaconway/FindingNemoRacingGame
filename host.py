@@ -10,8 +10,8 @@ gs = GameSpace()
 class InitConn(Protocol):
     def connectionMade(self):
         print "Other player has joined."
-        reactor.listenTCP(41130, GameHostConnectionFactory())
         self.transport.write("start game")
+        reactor.listenTCP(41130, GameHostConnectionFactory())
         
     def dataReceived(self, data):
         pass
