@@ -41,7 +41,6 @@ class GameHostConnection(Protocol):
 
 	def sendData(self, data): 
 		self.transport.write(data)
-        
     
 class GameHostConnectionFactory(ClientFactory):
     def __init__(self):
