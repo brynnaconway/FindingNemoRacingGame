@@ -192,8 +192,8 @@ class Home(pygame.sprite.Sprite):
 
 class SetUp:
     def __init__(self, nc_offset, shark_offset, jelly_offset, move_dir):
-        self.shark = Enemy("shark.png", 60, 35, 675, -124+shark_offset, 82, move_dir)
-        self.jelly = Enemy("jellyfish_sprite.png", 60, 57, 150, -150+jelly_offset, 94, move_dir)
+        self.shark = Enemy("shark.png", 60, 35, 675, -150+shark_offset, 82, move_dir)
+        self.jelly = Enemy("jellyfish_sprite.png", 60, 35, 150, -150+jelly_offset, 94, move_dir)
         self.player = Nemo(self, 55, 35+nc_offset)
         self.background = Background(self, "ocean_scene.png", 0, 0+nc_offset)
         self.background2 = Background(self, "ocean_scene_copy.png", 1500, 0+nc_offset)
@@ -204,10 +204,11 @@ class SetUp:
         self.sleep_count = 0
         self.jelly_collision = 0
         self.shark2 = Enemy("shark.png", 60, 35, 1800, -124+shark_offset, 82, move_dir)
-        self.jelly2 = Enemy("jellyfish_sprite.png", 60, 57, 1350, -150+jelly_offset, 94, move_dir)
+        self.jelly2 = Enemy("jellyfish_sprite.png", 60, 35, 1350, -150+jelly_offset, 94, move_dir)
         self.shark3 = Enemy("shark.png", 60, 35, 2500, -124+shark_offset, 82, move_dir)
-        self.jelly3 = Enemy("jellyfish_sprite.png", 60, 57, 2000, -150+jelly_offset, 94, move_dir)
-        self.obstacles = pygame.sprite.Group(self.background, self.background2, self.background3, self.shark, self.jelly, self.crush, self.home, self.shark2, self.shark3, self.jelly2, self.jelly3)
+        self.jelly3 = Enemy("jellyfish_sprite.png", 60, 35, 2000, -150+jelly_offset, 94, move_dir)
+        self.backgrounds = pygame.sprite.Group(self.background, self.background2, self.background3)
+        self.obstacles = pygame.sprite.Group(self.shark, self.jelly, self.home, self.shark2, self.shark3, self.jelly2, self.jelly3)
         
 class GameSpace(): 
     def main(self, sendData):
@@ -217,10 +218,10 @@ class GameSpace():
         black = 0,0,0
         self.screen = pygame.display.set_mode(size)
         pygame.mouse.set_visible(True)
-        shark_offset = 788
-        jelly_offset = 884
+        shark_offset = 334 #788
+        jelly_offset = 334 #884
         self.top = SetUp(0, 0, 0, 1)
-        self.bottom = SetUp(334, shark_offset, jelly_offset, -1)
+        self.bottom = SetUp(334, shark_offset, jelly_offset, 1)
         #print "got to end of main"
         self.data_counter = 0
 
@@ -240,6 +241,7 @@ class GameSpace():
                     self.top.player.move(event.key)
                 else:
                     self.top.obstacles.update("move")
+                    self.top.crush.update("move")
                     self.top.player.move_updown(event.key)
         self.top.player.tick()
         if (self.top.player.rect.x + self.top.player.image.get_width() > 75) and self.top.sleep_count == 0:
@@ -257,9 +259,11 @@ class GameSpace():
             self.top.jelly_collision = 0
             self.top.sleep_count = 0
         self.top.obstacles.update("tick")
-        if self.top.crush.rect.x + self.top.crush.image.get_width() >= 1550:
-            self.top.obstacles.remove(self.top.crush)
+        self.top.crush.tick()
+        self.top.backgrounds.draw(self.screen)
         self.top.obstacles.draw(self.screen)
+        if self.top.crush.rect.x + self.top.crush.image.get_width() < 1550:
+            self.screen.blit(self.top.crush.image, self.top.crush.rect) 
         self.screen.blit(self.top.player.image, self.top.player.rect)
         pygame.display.flip()
 
@@ -292,9 +296,12 @@ class GameSpace():
             self.bottom.jelly_collision = 0
             self.bottom.sleep_count = 0
         self.bottom.obstacles.update("tick")
-        if self.bottom.crush.rect.x + self.bottom.crush.image.get_width() >= 1550:
-            self.bottom.obstacles.remove(self.bottom.crush)
-        self.bottom.obstacles.draw(self.screen)
+        self.bottom.crush.tick()
+        self.bottom.backgrounds.draw(self.screen)
+        if self.bottom.jelly.rect.y >= 332:
+            self.bottom.obstacles.draw(self.screen)
+        if self.bottom.crush.rect.x + self.bottom.crush.image.get_width() < 1550:
+            self.screen.blit(self.bottom.crush.image, self.bottom.crush.rect)
         self.screen.blit(self.bottom.player.image, self.bottom.player.rect)
         pygame.display.flip()
 

@@ -28,8 +28,11 @@ class GameClientConn(Protocol):
     def connectionMade(self):
         print "Connected to game host."
         gs.main(self.sendData)
-        loop = LoopingCall(gs.iteration)
-        loop.start(float(1/60))
+        try:
+	        loop = LoopingCall(gs.iteration)
+	        loop.start(float(1/60))
+        except:
+		    exit(1)
     
     def dataReceived(self, data):
         gs.get_data(data)

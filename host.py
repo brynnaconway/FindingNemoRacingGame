@@ -27,17 +27,20 @@ class InitConnFactory(ClientFactory):
         connector.connect()
 
 class GameHostConnection(Protocol):
-    def connectionMade(self):
-        print "Created game connection."
-        gs.main(self.sendData)
-        loop = LoopingCall(gs.iteration)
-        loop.start(float(1/60)) # like the clock tick
+	def connectionMade(self):
+		print "Created game connection."
+		gs.main(self.sendData)
+		try:
+			loop = LoopingCall(gs.iteration)
+			loop.start(float(1/60)) # like the clock tick
+		except:
+			exit(1)
 
-    def dataReceived(self, data):
-        gs.get_data(data)
+	def dataReceived(self, data):
+		gs.get_data(data)
 
-    def sendData(self, data): 
-    	self.transport.write(data)
+	def sendData(self, data): 
+		self.transport.write(data)
         
     
 class GameHostConnectionFactory(ClientFactory):
