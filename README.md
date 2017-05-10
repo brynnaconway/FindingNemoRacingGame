@@ -31,11 +31,13 @@
     obstacles/boosters.  These obstacles will be moving up and down in the
     direct path towards home.  If you hit the jellyfish, you will freeze for
     approximately half a second.  If you hit the shark, you will be forced to start over at
-    the start line.  If you swim too close to the bottom near the reef, your
+    the left edge of the screen.  If you swim too close to the bottom near the reef, your
     speed will significantly decrease.  However, if you manage to hit Crush, the
     turtle, you will get a speed boost that will zoom you forward.  You are
     continually moving along and avoiding obstacles.  Eventually, if you are
     successful, you will reach Marlin and Dory and have made it home. Whichever
-    user reaches Marlin and Dory first will win. Once a player has won, a message will appear on their screen.
+    user reaches Marlin and Dory first will win. Once a player has won, a
+    message will appear on their screen and then they can close the screen to
+    end the game.  The loser will have a losing message appear on their screen.
     
-    
+Enjoy!
