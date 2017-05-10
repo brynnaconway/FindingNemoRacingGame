@@ -33,8 +33,10 @@ class GameHostConnection(Protocol):
 		try:
 			loop = LoopingCall(gs.iteration)
 			loop.start(float(1/60)) # like the clock tick
-		except:
+			print("Game closed.")
 			exit(1)
+		except:
+			reactor.stop()
 
 	def dataReceived(self, data):
 		gs.get_data(data)

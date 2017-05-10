@@ -184,7 +184,11 @@ class SetUp:
         self.shark3 = Enemy("shark.png", 60, 35, 2300, -150+shark_offset, 62, move_dir)
         self.jelly4 = Enemy("jellyfish_sprite.png", 60, 35, 2600, -150+jelly_offset, 62, move_dir)
         self.backgrounds = pygame.sprite.Group(self.background, self.background2, self.background3)
-        self.obstacles = pygame.sprite.Group(self.shark, self.jelly, self.home, self.shark2, self.shark3, self.jelly2, self.jelly3, self.jelly4)
+        self.win_image, self.win_rect = load_image("win.png")
+        self.win_rect = self.win_rect.move(100, 10)
+        self.lose_image, self.lose_rect = load_image("game_over.jpg")
+        self.lose_rect = self.lose_rect.move(100, 10)
+        self.obstacles = pygame.sprite.Group(self.shark, self.jelly, self.shark2, self.shark3, self.jelly2, self.jelly3, self.jelly4)
         
 class GameSpace(): 
     def main(self, sendData):
@@ -204,6 +208,8 @@ class GameSpace():
         self.top_collided = 0
         self.bottom_collided = 0
         self.other_collided = 0
+        self.lost = 0
+        self.won = 0
 
     def get_data(self, data): 
         try:
@@ -223,7 +229,9 @@ class GameSpace():
         self.data_counter += 1
         for event in pygame.event.get(): 
             if event.type == pygame.QUIT:
-                exit(1)         
+                #self.event_package = EventPackage(self.connection)
+                #self.event_package.setExit(pygame.quit)   
+                pygame.quit()   
             if event.type == pygame.KEYDOWN and self.top.sleep_count == 0:
                 self.moved = 1
                 if (self.top.player.rect.x + self.top.player.image.get_width() < 900) or (self.top.home.rect.x + self.top.home.image.get_width() < 1400):
@@ -232,6 +240,7 @@ class GameSpace():
                     self.top.obstacles.update("move")
                     self.top.crush.update("move")
                     self.top.backgrounds.update("move")
+                    self.top.home.update("move")
                     self.top.player.move_updown(event.key)
         self.top.player.tick()
         if (self.top.player.rect.x + self.top.player.image.get_width() > 75) and self.top.sleep_count == 0:
@@ -283,8 +292,6 @@ class GameSpace():
             self.top.jelly_collision = 0
             self.top.sleep_count = 0
 
-        if self.top.player.rect.colliderect(self.top.home.rect):
-
         self.top.obstacles.update("tick")
         if self.top.crush.rect.colliderect(self.top.player.rect):
             while (self.top.player.rect.x + self.top.player.image.get_width() < 780):
@@ -297,8 +304,13 @@ class GameSpace():
         #self.top.crush.tick()
         self.top.backgrounds.draw(self.screen)
         self.top.obstacles.draw(self.screen)
+        self.screen.blit(self.top.home.image, self.top.home.rect)
         if self.top.crush.rect.x + self.top.crush.image.get_width() < 1550:
             self.screen.blit(self.top.crush.image, self.top.crush.rect) 
+        if self.won == 1:
+            self.screen.blit(self.top.win_image, self.top.win_rect)
+        if self.lost == 1:
+            self.screen.blit(self.top.lose_image, self.top.lose_rect)
         self.screen.blit(self.top.player.image, self.top.player.rect)
         pygame.display.flip()
 
@@ -314,6 +326,7 @@ class GameSpace():
                 self.bottom.obstacles.update("move")
                 self.bottom.backgrounds.update("move")
                 self.bottom.crush.update("move")
+                self.bottom.home.update("move")
                 self.last_rect = self.bottom.shark.rect.x
                 #self.bottom.player.move_updown(event.key)
         #self.bottom.player.rect = self.bottom.player.rect.move()
@@ -343,6 +356,7 @@ class GameSpace():
         if self.other_collided == 1:
             self.bottom.crush.rect = self.bottom.crush.rect.move(40, 0)
         self.bottom.backgrounds.draw(self.screen)
+        self.screen.blit(self.bottom.home.image, self.bottom.home.rect)
         if self.bottom.jelly.rect.y >= 332:
             self.bottom.obstacles.draw(self.screen)
         if self.bottom.crush.rect.x + self.bottom.crush.image.get_width() < 1550:
@@ -350,6 +364,15 @@ class GameSpace():
             self.other_collided = 0
 
         self.screen.blit(self.bottom.player.image, self.bottom.player.rect)
+
+        if self.top.player.rect.colliderect(self.top.home.rect):
+            self.screen.blit(self.top.win_image, self.top.win_rect)
+            self.won = 1
+            #sys.exit()
+        if self.bottom.player.rect.colliderect(self.bottom.home.rect):
+            self.screen.blit(self.top.lose_image, self.top.lose_rect)
+            self.lost = 1
+
         pygame.display.flip()
 
 def load_image(image_name):

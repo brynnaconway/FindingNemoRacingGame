@@ -31,8 +31,10 @@ class GameClientConn(Protocol):
         try:
 	        loop = LoopingCall(gs.iteration)
 	        loop.start(float(1/60))
+	        print("Game closed.")
+	        exit(1)
         except:
-		    exit(1)
+		    reactor.stop()
     
     def dataReceived(self, data):
         gs.get_data(data)
