@@ -1,4 +1,4 @@
-# ParadigmsProject
+# Paradigms Project
 ## Finding Nemo Race Game
 ### Brynna Conway and Leah Plofchan
 
@@ -35,7 +35,6 @@
     turtle, you will get a speed boost that will zoom you forward.  You are
     continually moving along and avoiding obstacles.  Eventually, if you are
     successful, you will reach Marlin and Dory and have made it home. Whichever
-    user reaches Marlin and Dory first will win.
-
-    Once a player has reached home and the game is over, the screen will close.
-    NEED TO EXPLAIN
+    user reaches Marlin and Dory first will win. Once a player has won, a message will appear on their screen.
+    
+    
