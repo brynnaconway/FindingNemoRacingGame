@@ -15,7 +15,8 @@
 2. How to Start the Game
 ----------------------------
     Once both windows appear, it is time to begin the race! Inspired by Disney
-    Pixar's Finding Nemo, the objective of the game is to beat your opponent in
+    Pixar's Finding Nemo, 
+    the objective of the game is to beat your opponent in
     finding your way home.  Both players will be the character Nemo, but you
     will always see your gamespace screen as the top screen on the window.  You
     will be able to see your opponent's progress in the bottom gamespace.  
