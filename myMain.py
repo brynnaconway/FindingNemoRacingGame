@@ -193,7 +193,6 @@ class GameSpace():
         self.other_collided = 0
         self.lost = 0
         self.won = 0
-        time.sleep(1)
 
     # received data from other player via network connection
     def get_data(self, data): 
