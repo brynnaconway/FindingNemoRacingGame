@@ -15,7 +15,7 @@
 2. How to Start the Game
 ----------------------------
     Once both windows appear, it is time to begin the race! Inspired by Disney
-    Pixar's [Finding Nemo](https://www.youtube.com/watch?v=wZdpNglLbt8), 
+    Pixar's Finding Nemo, 
     the objective of the game is to beat your opponent in
     finding your way home.  Both players will be the character Nemo, but you
     will always see your gamespace screen as the top screen on the window.  You
