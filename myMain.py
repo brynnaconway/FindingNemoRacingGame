@@ -1,4 +1,5 @@
 import pygame, os, sys, math, time
+import cPickle as pickle 
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, gs, image_name, x, y): 
@@ -209,7 +210,8 @@ class SetUp:
         self.obstacles = pygame.sprite.Group(self.background, self.background2, self.background3, self.shark, self.jelly, self.crush, self.home, self.shark2, self.shark3, self.jelly2, self.jelly3)
         
 class GameSpace(): 
-    def main(self):
+    def main(self, sendData):
+        self.sendData = sendData
         pygame.init()
         size = width, height = 1400, 664
         black = 0,0,0
@@ -220,13 +222,19 @@ class GameSpace():
         self.top = SetUp(0, 0, 0, 1)
         self.bottom = SetUp(334, shark_offset, jelly_offset, -1)
         #print "got to end of main"
+        self.data_counter = 0
 
+    def get_data(self, data): 
+        try:
+            self.bottom.player.rect = pickle.loads(data) 
+        except Exception as e:
+            print "ERROR: ", e
 
     def iteration(self):
-        #print "in loop"
+        self.data_counter += 1
         for event in pygame.event.get(): 
             if event.type == pygame.QUIT:
-                return         
+                exit(1)         
             if event.type == pygame.KEYDOWN and self.top.sleep_count == 0:
                 if (self.top.player.rect.x + self.top.player.image.get_width() < 900) or (self.top.home.rect.x + self.top.home.image.get_width() < 1400):
                     self.top.player.move(event.key)
@@ -255,6 +263,9 @@ class GameSpace():
         self.screen.blit(self.top.player.image, self.top.player.rect)
         pygame.display.flip()
 
+        if self.data_counter >= 5:
+            self.sendData(pickle.dumps(self.top.player.rect.move(0, 334)))
+            self.data_counter = 0
         '''for event in pygame.event.get(): 
             if event.type == pygame.QUIT:
                 return         
@@ -264,6 +275,7 @@ class GameSpace():
                 else:
                     self.bottom.obstacles.update("move")
                     self.bottom.player.move_updown(event.key)'''
+        #self.bottom.player.rect = self.bottom.player.rect.move()
         self.bottom.player.tick()
         if (self.bottom.player.rect.x + self.bottom.player.image.get_width() > 75) and self.bottom.sleep_count == 0:
             if self.bottom.player.rect.x + self.bottom.player.image.get_width() < 900:

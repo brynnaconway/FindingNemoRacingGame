@@ -12,7 +12,7 @@ class InitClientConn(Protocol):
     
     def dataReceived(self, data):
         if data == "start game":
-            reactor.connectTCP("newt.campus.nd.edu", 41130, GameClientConnFactory())
+            reactor.connectTCP("localhost", 41130, GameClientConnFactory())
     
 class InitClientConnFactory(ClientFactory):
     def __init__(self):
@@ -27,12 +27,15 @@ class InitClientConnFactory(ClientFactory):
 class GameClientConn(Protocol):
     def connectionMade(self):
         print "Connected to game host."
-        gs.main()
+        gs.main(self.sendData)
         loop = LoopingCall(gs.iteration)
         loop.start(float(1/60))
     
     def dataReceived(self, data):
-        print "got data: ", data
+        gs.get_data(data)
+
+    def sendData(self, data):
+    	self.transport.write(data)
 
 class GameClientConnFactory(ClientFactory):
     def __init__(self):
@@ -45,5 +48,5 @@ class GameClientConnFactory(ClientFactory):
         connector.connect()    
 
 # Connecting to Host:
-reactor.connectTCP("newt.campus.nd.edu", 40130, InitClientConnFactory())
+reactor.connectTCP("localhost", 40130, InitClientConnFactory())
 reactor.run()
