@@ -6,13 +6,14 @@ import sys
 
 gs = GameSpace()
 
+# Starting connection before opening game windows 
 class InitClientConn(Protocol):
     def connectionMade(self):
         print "Client connection made."
     
     def dataReceived(self, data):
         if data == "start game":
-            reactor.connectTCP("localhost", 41130, GameClientConnFactory())
+            reactor.connectTCP("localhost", 41130, GameClientConnFactory()) # start game connection 
     
 class InitClientConnFactory(ClientFactory):
     def __init__(self):
@@ -27,20 +28,17 @@ class InitClientConnFactory(ClientFactory):
 class GameClientConn(Protocol):
     def connectionMade(self):
         print "Connected to game host."
-        gs.main(self.sendData)
+        gs.main(self.sendData) # open game window 
         try:
-	        loop = LoopingCall(gs.iteration)
+	        loop = LoopingCall(gs.iteration) # run game 
 	        loop.start(float(1/60))
-	        print("Game closed.")
-	        exit(1)
         except:
-		    reactor.stop()
-    
+		    exit(1)
     def dataReceived(self, data):
-        gs.get_data(data)
+        gs.get_data(data) # use received data in game 
 
     def sendData(self, data):
-    	self.transport.write(data)
+    	self.transport.write(data) # send data to other player 
 
 class GameClientConnFactory(ClientFactory):
     def __init__(self):
