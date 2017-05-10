@@ -149,8 +149,8 @@ class Home(pygame.sprite.Sprite):
 # instantiate/initialize all objects of various classes
 class SetUp:
     def __init__(self, nc_offset, shark_offset, jelly_offset, move_dir):
-        self.shark = Enemy("shark.png", 60, 35, 675, -150+shark_offset, 62, move_dir)
-        self.jelly = Enemy("jellyfish_sprite.png", 60, 35, 150, -150+jelly_offset, 62, move_dir)
+        self.shark = Enemy("shark.png", 35, 30, 675, -150+shark_offset, 62, move_dir)
+        self.jelly = Enemy("jellyfish_sprite.png", 35, 30, 150, -150+jelly_offset, 62, move_dir)
         self.player = Nemo(self, 55, 35+nc_offset) # main player
         self.background = Background(self, "ocean_scene.png", 0, 0+nc_offset)
         self.background2 = Background(self, "ocean_scene_copy.png", 1500, 0+nc_offset)  # extend screen
@@ -161,11 +161,11 @@ class SetUp:
         self.sleep_count = 0
         self.jelly_collision = 0
         # more objects of the obstacles that appear on the path
-        self.jelly2 = Enemy("jellyfish_sprite.png", 60, 35, 1000, -150+jelly_offset, 62, move_dir)
-        self.shark2 = Enemy("shark.png", 60, 35, 1400, -150+shark_offset, 62, move_dir)
-        self.jelly3 = Enemy("jellyfish_sprite.png", 60, 35, 1800, -150+jelly_offset, 62, move_dir)
-        self.shark3 = Enemy("shark.png", 60, 35, 2300, -150+shark_offset, 62, move_dir)
-        self.jelly4 = Enemy("jellyfish_sprite.png", 60, 35, 2600, -150+jelly_offset, 62, move_dir)
+        self.jelly2 = Enemy("jellyfish_sprite.png", 35, 30, 1000, -150+jelly_offset, 62, move_dir)
+        self.shark2 = Enemy("shark.png", 35, 30, 1400, -150+shark_offset, 62, move_dir)
+        self.jelly3 = Enemy("jellyfish_sprite.png", 35, 30, 1800, -150+jelly_offset, 62, move_dir)
+        self.shark3 = Enemy("shark.png", 35, 30, 2300, -150+shark_offset, 62, move_dir)
+        self.jelly4 = Enemy("jellyfish_sprite.png", 35, 30, 2600, -150+jelly_offset, 62, move_dir)
         self.backgrounds = pygame.sprite.Group(self.background, self.background2, self.background3) # organize backgrounds
         self.win_image, self.win_rect = load_image("win.png")
         self.win_rect = self.win_rect.move(100, 10)             # end of game winning message
@@ -193,6 +193,7 @@ class GameSpace():
         self.other_collided = 0
         self.lost = 0
         self.won = 0
+        time.sleep(1)
 
     # received data from other player via network connection
     def get_data(self, data): 
