@@ -178,12 +178,13 @@ class SetUp:
         pygame.key.set_repeat(500, 30)
         self.sleep_count = 0
         self.jelly_collision = 0
-        self.shark2 = Enemy("shark.png", 60, 35, 1800, -150+shark_offset, 62, move_dir)
-        self.jelly2 = Enemy("jellyfish_sprite.png", 60, 35, 1350, -150+jelly_offset, 62, move_dir)
-        self.shark3 = Enemy("shark.png", 60, 35, 2500, -124+shark_offset, 62, move_dir)
-        self.jelly3 = Enemy("jellyfish_sprite.png", 60, 35, 2000, -150+jelly_offset, 62, move_dir)
+        self.jelly2 = Enemy("jellyfish_sprite.png", 60, 35, 1000, -150+jelly_offset, 62, move_dir)
+        self.shark2 = Enemy("shark.png", 60, 35, 1400, -150+shark_offset, 62, move_dir)
+        self.jelly3 = Enemy("jellyfish_sprite.png", 60, 35, 1800, -150+jelly_offset, 62, move_dir)
+        self.shark3 = Enemy("shark.png", 60, 35, 2300, -150+shark_offset, 62, move_dir)
+        self.jelly4 = Enemy("jellyfish_sprite.png", 60, 35, 2600, -150+jelly_offset, 62, move_dir)
         self.backgrounds = pygame.sprite.Group(self.background, self.background2, self.background3)
-        self.obstacles = pygame.sprite.Group(self.shark, self.jelly, self.home, self.shark2, self.shark3, self.jelly2, self.jelly3)
+        self.obstacles = pygame.sprite.Group(self.shark, self.jelly, self.home, self.shark2, self.shark3, self.jelly2, self.jelly3, self.jelly4)
         
 class GameSpace(): 
     def main(self, sendData):
@@ -236,17 +237,54 @@ class GameSpace():
         if (self.top.player.rect.x + self.top.player.image.get_width() > 75) and self.top.sleep_count == 0:
             if self.top.player.rect.x + self.top.player.image.get_width() < 900:
                 self.top.player.rect = self.top.player.rect.move(-1, 0)
+
+        # collision with obstacles 
         if self.top.player.rect.colliderect(self.top.shark.rect):
             self.top.player = Nemo(self, 55, 35)
             self.top.player.tick()
         if self.top.player.rect.colliderect(self.top.jelly.rect):
             self.top.jelly_collision = 1
         if self.top.jelly_collision == 1:
-            #self.player.rotate()
             self.top.sleep_count+= 1
         if self.top.sleep_count >= 60:
             self.top.jelly_collision = 0
             self.top.sleep_count = 0
+
+        # next set of collisions 
+        if self.top.player.rect.colliderect(self.top.shark2.rect):
+            self.top.player = Nemo(self, 55, 35)
+            self.top.player.tick()
+        if self.top.player.rect.colliderect(self.top.jelly2.rect):
+            self.top.jelly_collision = 1
+        if self.top.jelly_collision == 1:
+            self.top.sleep_count+= 1
+        if self.top.sleep_count >= 40:
+            self.top.jelly_collision = 0
+            self.top.sleep_count = 0
+
+        # more collisions 
+        if self.top.player.rect.colliderect(self.top.shark3.rect):
+            self.top.player = Nemo(self, 55, 35)
+            self.top.player.tick()
+        if self.top.player.rect.colliderect(self.top.jelly3.rect):
+            self.top.jelly_collision = 1
+        if self.top.jelly_collision == 1:
+            self.top.sleep_count+= 1
+        if self.top.sleep_count >= 40:
+            self.top.jelly_collision = 0
+            self.top.sleep_count = 0
+
+        # last possible collision
+        if self.top.player.rect.colliderect(self.top.jelly4.rect):
+            self.top.jelly_collision = 1
+        if self.top.jelly_collision == 1:
+            self.top.sleep_count+= 1
+        if self.top.sleep_count >= 40:
+            self.top.jelly_collision = 0
+            self.top.sleep_count = 0
+
+        if self.top.player.rect.colliderect(self.top.home.rect):
+
         self.top.obstacles.update("tick")
         if self.top.crush.rect.colliderect(self.top.player.rect):
             while (self.top.player.rect.x + self.top.player.image.get_width() < 780):
