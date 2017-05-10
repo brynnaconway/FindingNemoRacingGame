@@ -1,4 +1,4 @@
-# ParadigmsProject
+# Paradigms Project
 ## Finding Nemo Race Game
 ### Brynna Conway and Leah Plofchan
 
@@ -15,7 +15,8 @@
 2. How to Start the Game
 ----------------------------
     Once both windows appear, it is time to begin the race! Inspired by Disney
-    Pixar's Finding Nemo, the objective of the game is to beat your opponent in
+    Pixar's [Finding Nemo](https://www.youtube.com/watch?v=wZdpNglLbt8), 
+    the objective of the game is to beat your opponent in
     finding your way home.  Both players will be the character Nemo, but you
     will always see your gamespace screen as the top screen on the window.  You
     will be able to see your opponent's progress in the bottom gamespace.  
@@ -35,7 +36,6 @@
     turtle, you will get a speed boost that will zoom you forward.  You are
     continually moving along and avoiding obstacles.  Eventually, if you are
     successful, you will reach Marlin and Dory and have made it home. Whichever
-    user reaches Marlin and Dory first will win.
-
-    Once a player has reached home and the game is over, the screen will close.
-    NEED TO EXPLAIN
+    user reaches Marlin and Dory first will win. Once a player has won, a message will appear on their screen.
+    
+    
