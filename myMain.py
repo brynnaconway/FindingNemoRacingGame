@@ -29,7 +29,6 @@ class Enemy(pygame.sprite.Sprite):
 
     def tick(self):
         if self.time == self.time_max:
-            print("move dir: ", self.move_dir)
             if self.count < self.count_time:
                 self.rect = self.rect.move(0, 4*self.move_dir)
                 self.count += 1
@@ -207,10 +206,9 @@ class SetUp:
         self.jelly2 = Enemy("jellyfish_sprite.png", 60, 57, 1350, -150+jelly_offset, 94, move_dir)
         self.shark3 = Enemy("shark.png", 60, 35, 2500, -124+shark_offset, 82, move_dir)
         self.jelly3 = Enemy("jellyfish_sprite.png", 60, 57, 2000, -150+jelly_offset, 94, move_dir)
-
         self.obstacles = pygame.sprite.Group(self.background, self.background2, self.background3, self.shark, self.jelly, self.crush, self.home, self.shark2, self.shark3, self.jelly2, self.jelly3)
         
-class GameSpace: 
+class GameSpace(): 
     def main(self):
         pygame.init()
         size = width, height = 1400, 664
@@ -221,8 +219,11 @@ class GameSpace:
         jelly_offset = 884
         self.top = SetUp(0, 0, 0, 1)
         self.bottom = SetUp(334, shark_offset, jelly_offset, -1)
+        #print "got to end of main"
 
-    def loop():
+
+    def iteration(self):
+        #print "in loop"
         for event in pygame.event.get(): 
             if event.type == pygame.QUIT:
                 return         
@@ -295,22 +296,4 @@ def load_image(image_name):
         raise SystemExit 
     return image, image.get_rect()
 
-def load_sound(name): 
-    PATH = "~/paradigms/deathstar/"
-    class NoneSound: 
-        def play(self): pass
-    if not pygame.mixer: 
-        return NoneSound()
-    FULL_PATH = PATH + name
-    try: 
-        sound = pygame.mixer.Sound(FULL_PATH)
-    except pygame.error: 
-        print("Cannot load sound: ", pygame.wav)
-        raise SystemExit 
-    return sound
-
-
-if __name__ == "__main__": 
-    gs = GameSpace() 
-    gs.main(screen, top, bottom)
 

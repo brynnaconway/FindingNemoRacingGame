@@ -28,7 +28,7 @@ class GameClientConn(Protocol):
     def connectionMade(self):
         print "Connected to game host."
         gs.main()
-        loop = LoopingCall(gs.loop)
+        loop = LoopingCall(gs.iteration)
         loop.start(float(1/60))
     
     def dataReceived(self, data):

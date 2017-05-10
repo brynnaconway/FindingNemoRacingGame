@@ -30,7 +30,7 @@ class GameHostConnection(Protocol):
     def connectionMade(self):
         print "Created game connection."
         gs.main()
-        loop = LoopingCall(gs.loop)
+        loop = LoopingCall(gs.iteration)
         loop.start(float(1/60)) # like the clock tick
 
     def dataReceived(self, data):
