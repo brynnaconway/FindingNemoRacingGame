@@ -41,3 +41,5 @@
     end the game.  The loser will have a losing message appear on their screen.
     
 Enjoy!
+
+* Images found through Google image search
