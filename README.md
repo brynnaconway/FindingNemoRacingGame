@@ -1,5 +1,4 @@
 # Finding Nemo Race Game
-## Programming Paradigms Final Project
 ### Brynna Conway and Leah Plofchan
 
 1. Instructions on How To Run The Game
